@@ -1,0 +1,70 @@
+document.documentElement.innerHTML = `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Empates</title>
+<style>
+body { background:#0b0b0b; color:white; font-family:Arial; text-align:center; }
+.grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:20px; }
+button { padding:15px; font-size:18px; border-radius:8px; border:none; }
+.green{background:#1f8f3a;color:white;}
+.yellow{background:#c9a600;color:black;}
+.red{background:#a40000;color:white;}
+</style>
+</head>
+<body>
+
+<h2>EMPATE – 8 MAZOS</h2>
+<p>Burn cards: <input id="burn" type="number" value="0" style="width:60px">
+<button onclick="setBurn()">OK</button></p>
+
+<p>Cartas restantes: <b id="remaining">416</b></p>
+
+<div class="grid" id="cards"></div>
+
+<script>
+let remaining=416;
+let cards=[
+["A",32],["2",32],["3",32],["4",32],["5",32],["6",32],
+["7",32],["8",32],["9",32],["10",32],["J",32],["Q",32],["K",32]
+];
+
+function color(n){ return n>=22?"green":n>=11?"yellow":"red"; }
+
+function draw(){
+let g=document.getElementById("cards");
+g.innerHTML="";
+cards.forEach((c,i)=>{
+let b=document.createElement("button");
+b.className=color(c[1]);
+b.innerHTML=c[0]+"<br>"+c[1];
+b.onclick=()=>{
+if(c[1]>0 && remaining>0){c[1]--;remaining--;update();}
+};
+g.appendChild(b);
+});
+update();
+}
+
+function update(){
+document.getElementById("remaining").innerText=remaining;
+document.querySelectorAll("#cards button").forEach((b,i)=>{
+b.className=color(cards[i][1]);
+});
+}
+
+function setBurn(){
+let burn=parseInt(document.getElementById("burn").value)||0;
+remaining=416-burn;
+if(remaining<0)remaining=0;
+update();
+}
+
+draw();
+<\/script>
+
+</body>
+</html>
+`;
