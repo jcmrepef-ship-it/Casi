@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Empates – 8 Mazos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+    background:#0b0b0b;
+    color:white;
+    font-family:Arial, sans-serif;
+    text-align:center;
+}
+h1 { margin-top:10px; }
+input {
+    width:60px;
+    font-size:18px;
+    text-align:center;
+}
+.grid {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin:20px;
+}
+button {
+    padding:15px;
+    font-size:18px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+}
+.green { background:#1f8f3a; color:white; }
+.yellow { background:#c9a600; color:black; }
+.red { background:#a40000; color:white; }
+.info { margin:10px; font-size:18px; }
+.reset {
+    background:#444;
+    color:white;
+    margin-top:15px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>EMPATE – 8 MAZOS</h1>
+
+<div class="info">
+Burn cards:
+<input type="number" id="burn" value="0" min="0">
+<button onclick="setBurn()">OK</button>
+</div>
+
+<div class="info">
+Cartas restantes en zapato:
+<b id="remaining">416</b>
+</div>
+
+<div class="grid" id="cards"></div>
+
+<button class="reset" onclick="resetGame()">RESET ZAPATO</button>
+
+<script>
+const decks = 8;
+const totalCards = decks * 52;
+
+const cardTypes = [
+    {name:"A", count:32},
+    {name:"2", count:32},
+    {name:"3", count:32},
+    {name:"4", count:32},
+    {name:"5", count:32},
+    {name:"6", count:32},
+    {name:"7", count:32},
+    {name:"8", count:32},
+    {name:"9", count:32},
+    {name:"10", count:32},
+    {name:"J", count:32},
+    {name:"Q", count:32},
+    {name:"K", count:32}
+];
+
+let remainingCards = totalCards;
+
+function colorClass(count) {
+    if (count >= 22) return "green";
+    if (count >= 11) return "yellow";
+    return "red";
+}
+
+function render() {
+    const container = document.getElementById("cards");
+    container.innerHTML = "";
+    cardTypes.forEach((c, i) => {
+        const btn = document.createElement("button");
+        btn.innerHTML = `${c.name}<br>${c.count}`;
+        btn.className = colorClass(c.count);
+        btn.onclick = () => {
+            if (c.count > 0 && remainingCards > 0) {
+                c.count--;
+                remainingCards--;
+                update();
+            }
+        };
+        container.appendChild(btn);
+    });
+    update();
+}
+
+function update() {
+    document.getElementById("remaining").innerText = remainingCards;
+    renderColors();
+}
+
+function renderColors() {
+    document.querySelectorAll(".grid button").forEach((btn, i) => {
+        btn.className = colorClass(cardTypes[i].count);
+    });
+}
+
+function setBurn() {
+    let burn = parseInt(document.getElementById("burn").value) || 0;
+    remainingCards = totalCards - burn;
+    if (remainingCards < 0) remainingCards = 0;
+    document.getElementById("remaining").innerText = remainingCards;
+}
+
+function resetGame() {
+    remainingCards = totalCards;
+    document.getElementById("burn").value = 0;
+    cardTypes.forEach(c => c.count = 32);
+    render();
+}
+
+render();
+</script>
+
+</body>
+</html>
